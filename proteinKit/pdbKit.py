@@ -85,10 +85,17 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                 elif (int(line[22:26].strip()) == resSeq):
                     continue
                 else:
-                    assert (int(line[22:26].strip()) == resSeq + 1), 'wrong index'
-                    resSeq = int(line[22:26].strip())
-                    resName = line[17:20]
-                    chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                    if (int(line[22:26].strip()) == resSeq + 1):
+                        resSeq = int(line[22:26].strip())
+                        resName = line[17:20]
+                        chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                    else:
+                        gap: int = int(line[22:26].strip()) - resSeq - 1
+                        gapSeq: str = '-' * gap
+                        chainSeq += gapSeq
+                        resSeq = int(line[22:26].strip())
+                        resName = line[17:20]
+                        chainSeq += ProteinKit.aaDictTHREE2One[resName]
             elif (line.startswith('TER')):                              # recognizing termination with the line 'TER'
                 output[thisChainId] = chainSeq
                 resSeq = 0
@@ -104,3 +111,5 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
     return (output)
 
 
+if __name__ == '__main__':
+    pdb2Seq(pdbFilePath="./3LB6.pdb", fasta=True)
