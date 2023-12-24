@@ -5,7 +5,6 @@ Sorry for my poor English.
 '''
 
 import os
-import typing
 
 class ProteinKit():
 
@@ -99,7 +98,10 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
         with open(file=fileName+'.fasta', mode='w') as fastaFile:
             for key in output.keys():
                 fastaFile.write('>'+fileName+'_chain_'+key+'\n')
-                fastaFile.write(output[key]+'\n')
+                thisLine: list[str] = [output[key][i:i+80] for i in range(0, len(output[key]), 80)]
+                for i in thisLine:
+                    fastaFile.write(i + '\n')
+                fastaFile.write
     return (output)
 
 
