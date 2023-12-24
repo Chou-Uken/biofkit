@@ -101,7 +101,6 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                 thisLine: list[str] = [output[key][i:i+80] for i in range(0, len(output[key]), 80)]
                 for i in thisLine:
                     fastaFile.write(i + '\n')
-                fastaFile.write
     return (output)
 
 
