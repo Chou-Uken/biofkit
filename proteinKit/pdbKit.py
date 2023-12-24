@@ -110,6 +110,3 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                     fastaFile.write(i + '\n')
     return (output)
 
-
-if __name__ == '__main__':
-    pdb2Seq(pdbFilePath="./3LB6.pdb", fasta=True)
