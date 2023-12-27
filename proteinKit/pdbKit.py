@@ -62,7 +62,7 @@ class ProteinKit():
     # X: Orthogonal coordinates for X in angstroms (A).
     # Y: Orthogonal coordinates for Y in angstroms (A).
     # Z: Orthogonal coordinates for Z in angstroms (A).
-    columns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+    pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
 
 
     def __init__(self) -> None:
@@ -72,6 +72,7 @@ class ProteinKit():
 
 # transfer protein structure file (pdb) into sequence string.
 def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
+    proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFilePath) as pdbFile:
         thisChainId: str = 'defined'
         line: str = pdbFile.readline()
@@ -87,7 +88,7 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
             if (resName == 'UNK'):
                 chainSeq += '-'
             else:
-                chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                chainSeq += proteinKit.aaDictTHREE2One[resName]
 
         while (line):
             line = pdbFile.readline()
@@ -99,7 +100,7 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                     if (resName == 'UNK'):
                         chainSeq += '-'
                     else:
-                        chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                        chainSeq += proteinKit.aaDictTHREE2One[resName]
                 elif (int(line[22:26].strip()) == resSeq):
                     continue
                 else:
@@ -109,7 +110,7 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                         if (resName == 'UNK'):
                             chainSeq += '-'
                         else:
-                            chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                            chainSeq += proteinKit.aaDictTHREE2One[resName]
                     else:
                         gap: int = int(line[22:26].strip()) - resSeq - 1
                         gapSeq: str = '-' * gap
@@ -119,7 +120,7 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                         if (resName == 'UNK'):
                             chainSeq += '-'
                         else:
-                            chainSeq += ProteinKit.aaDictTHREE2One[resName]
+                            chainSeq += proteinKit.aaDictTHREE2One[resName]
             elif (line.startswith('TER')):                              # recognizing termination with the line 'TER'
                 output[thisChainId] = chainSeq
                 resSeq = 0
@@ -137,16 +138,23 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
 
 
 # 从pdb文件中读取氨基酸所有原子的坐标等信息
-def pdb2dfList(pdbFilePath: str) -> list[list[int, str, str, int, str, float, float, float]]:
-    output: list[list[int, str, str, int, str, float, float, float]] = []
+def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, str, int, str, float, float, float]]:
+    output: list[list] = []
+    if (colName):
+        proteinKit: ProteinKit = ProteinKit()
+        output.append(proteinKit.pdbInfoColumns)
     with open(file=pdbFilePath, mode='r') as pdbFile:
         line: str = pdbFile.readline()
         if (line.startswith('ATOM')):
             output.append([int(line[6:11].strip()), str(line[12:16].strip()), \
-                           str(line[17:20].strip()), int(line[22:26].strip()), \
-                           str(line[21]), float(line[30:38].strip()), \
-                           float(line[38:46].strip()), float(line[46:54])])
+                            str(line[17:20].strip()), int(line[22:26].strip()), \
+                            str(line[21]), float(line[30:38].strip()), \
+                            float(line[38:46].strip()), float(line[46:54])])
         while (line):
-            
-
-            columns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+            line = pdbFile.readline()
+            if (line.startswith('ATOM')):
+                output.append([int(line[6:11].strip()), str(line[12:16].strip()), \
+                            str(line[17:20].strip()), int(line[22:26].strip()), \
+                            str(line[21]), float(line[30:38].strip()), \
+                            float(line[38:46].strip()), float(line[46:54])])
+    return (output)
