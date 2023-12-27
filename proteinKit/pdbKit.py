@@ -142,7 +142,10 @@ def pdb2dfList(pdbFilePath: str) -> list[list[int, str, str, int, str, float, fl
     with open(file=pdbFilePath, mode='r') as pdbFile:
         line: str = pdbFile.readline()
         if (line.startswith('ATOM')):
-            output.append([int(line[6:11].strip()), str(line[12:16].strip())])
+            output.append([int(line[6:11].strip()), str(line[12:16].strip()), \
+                           str(line[17:20].strip()), int(line[22:26].strip()), \
+                           str(line[21]), float(line[30:38].strip()), \
+                           float(line[38:46].strip()), float(line[46:54])])
         while (line):
             
 
