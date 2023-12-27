@@ -71,7 +71,7 @@ class ProteinKit():
 
 
 # transfer protein structure file (pdb) into sequence string.
-def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
+def pdb2Seq(pdbFilePath: str, fasta: bool = False, fastaLineLen: int = 80) -> dict[str, str]:
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFilePath) as pdbFile:
         thisChainId: str = 'defined'
@@ -130,14 +130,14 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
         with open(file=fileName+'.fasta', mode='w') as fastaFile:
             for key in output.keys():
                 fastaFile.write('>'+fileName+'_chain_'+key+'\n')
-                thisLine: list[str] = [output[key][i:i+80] for i in range(0, len(output[key]), 80)]
+                thisLine: list[str] = [output[key][i:i+fastaLineLen] for i in range(0, len(output[key]), fastaLineLen)]
                 for i in thisLine:
                     fastaFile.write(i + '\n')
     return (output)
 
 
 
-# 从pdb文件中读取氨基酸所有原子的坐标等信息
+# load the information of all amino-acid-residue atoms into a list which can be converted to a dataframe with famous `pandas`.
 def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, str, int, str, float, float, float]]:
     output: list[list] = []
     if (colName):
@@ -158,3 +158,7 @@ def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, st
                             str(line[21]), float(line[30:38].strip()), \
                             float(line[38:46].strip()), float(line[46:54])])
     return (output)
+
+
+
+# pdb2
