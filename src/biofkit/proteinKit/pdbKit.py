@@ -160,5 +160,3 @@ def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, st
     return (output)
 
 
-
-# pdb2
