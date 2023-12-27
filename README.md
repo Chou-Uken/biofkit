@@ -11,6 +11,11 @@ conda install -c chou_uken biofkit
 mamba install -c chou_uken biofkit
 ```
 
+### Pip
+```console
+pip install biofkit
+```
+
 ## How to Use
 ### ProteinKit
 ```python
