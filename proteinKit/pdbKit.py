@@ -52,6 +52,18 @@ class ProteinKit():
         'U': 'sec', 'O': 'pyl'                                          # Rare amino acid
     }
 
+    # PDB file infos import.
+    # Column meanings:
+    # Serial: Atom serial number.
+    # Atom: Atom name.
+    # ResName: Residue name.
+    # ResSeq: Residue sequence number.
+    # ChainId: Chain identifier.
+    # X: Orthogonal coordinates for X in angstroms (A).
+    # Y: Orthogonal coordinates for Y in angstroms (A).
+    # Z: Orthogonal coordinates for Z in angstroms (A).
+    columns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+
 
     def __init__(self) -> None:
         pass
@@ -122,3 +134,16 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
                     fastaFile.write(i + '\n')
     return (output)
 
+
+
+# 从pdb文件中读取氨基酸所有原子的坐标等信息
+def pdb2dfList(pdbFilePath: str) -> list[list[int, str, str, int, str, float, float, float]]:
+    output: list[list[int, str, str, int, str, float, float, float]] = []
+    with open(file=pdbFilePath, mode='r') as pdbFile:
+        line: str = pdbFile.readline()
+        if (line.startswith('ATOM')):
+            output.append([int(line[6:11].strip()), str(line[12:16].strip())])
+        while (line):
+            
+
+            columns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
