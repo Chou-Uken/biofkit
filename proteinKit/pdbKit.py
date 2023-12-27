@@ -72,7 +72,10 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False) -> dict[str, str]:
             thisChainId = line[21]
             resSeq = int(line[22:26].strip())
             resName = line[17:20]
-            chainSeq += ProteinKit.aaDictTHREE2One[resName]
+            if (resName == 'UNK'):
+                chainSeq += '-'
+            else:
+                chainSeq += ProteinKit.aaDictTHREE2One[resName]
 
         while (line):
             line = pdbFile.readline()
