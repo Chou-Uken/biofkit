@@ -1,10 +1,10 @@
 [project]
 name = "biofkit"
-version = "0.0.4"
+version = "0.0.5"
 authors = [
   { name="Zhang Yujian", email="Chouuken@outlook.com" },
 ]
-description = "With biofkit, sequence can be easily extract from pdb. And more functions will be added."
+description = "With biofkit you can deal with pdb file (extract sequence, atom information and so on) very easily. "
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
