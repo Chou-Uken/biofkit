@@ -71,7 +71,7 @@ class ProteinKit():
 
 
 # transfer protein structure file (pdb) into sequence string.
-def pdb2Seq(pdbFilePath: str, fasta: bool = False, fastaLineLen: int = 80) -> dict[str, str]:
+def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80) -> dict[str, str]:
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFilePath) as pdbFile:
         thisChainId: str = 'defined'
@@ -125,21 +125,24 @@ def pdb2Seq(pdbFilePath: str, fasta: bool = False, fastaLineLen: int = 80) -> di
                 output[thisChainId] = chainSeq
                 resSeq = 0
                 chainSeq = ''
-    if (fasta):
+    # output the fasta files.
+    if (fastaFilePath is not None):
         fileName: str = pdbFilePath.split(os.sep)[-1].rstrip('.pdb')
-        with open(file=fileName+'.fasta', mode='w') as fastaFile:
+        with open(file=os.path.join(fastaFilePath, fileName+'.fasta'), mode='w') as fastaFile:
             for key in output.keys():
                 fastaFile.write('>'+fileName+'_chain_'+key+'\n')
                 thisLine: list[str] = [output[key][i:i+fastaLineLen] for i in range(0, len(output[key]), fastaLineLen)]
                 for i in thisLine:
                     fastaFile.write(i + '\n')
+            print(fileName+' converted!\n')
     return (output)
 
 
 
-# load the information of all amino-acid-residue atoms into a list which can be converted to a dataframe with famous `pandas`.
-def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, str, int, str, float, float, float]]:
+# load the information of all amino-acid-residue atoms into a list. output[idx] shows the information of an atom.
+def pdb2List(pdbFilePath: str, csvPath: str = None, colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
     output: list[list] = []
+    # pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
     if (colName):
         proteinKit: ProteinKit = ProteinKit()
         output.append(proteinKit.pdbInfoColumns)
@@ -157,6 +160,43 @@ def pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, st
                             str(line[17:20].strip()), int(line[22:26].strip()), \
                             str(line[21]), float(line[30:38].strip()), \
                             float(line[38:46].strip()), float(line[46:54])])
+    # output the csv file.
+    if (csvPath is not None):
+        for atomListIdx in range(len(output)):
+            output[atomListIdx] = list(map(str, output[atomListIdx]))
+        with open(file=csvPath, mode='w') as csvFile:
+            csvFile.writelines([','.join(atomInfoList)+'\n' for atomInfoList in output])
     return (output)
 
+
+
+# load the information of all amimo-acid-residue atoms into a dictionary, which can be converted into a dataframe with famous `pandas`.
+def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
+    # pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+    proteinKit: ProteinKit = ProteinKit()
+    keyNameList: list[str] = proteinKit.pdbInfoColumns
+    output: dict[str, list] = {keyName: [] for keyName in keyNameList}
+    with open(file=pdbFilePath, mode='r') as pdbFile:
+        line: str = pdbFile.readline()
+        if (line.startswith('ATOM')):
+            output[keyNameList[0]].append(int(line[6:11].strip()))
+            output[keyNameList[1]].append(str(line[12:16].strip()))
+            output[keyNameList[2]].append(str(line[17:20].strip()))
+            output[keyNameList[3]].append(int(line[22:26].strip()))
+            output[keyNameList[4]].append(str(line[21]))
+            output[keyNameList[5]].append(float(line[30:38].strip()))
+            output[keyNameList[6]].append(float(line[38:46].strip()))
+            output[keyNameList[7]].append(float(line[46:54].strip()))
+        while (line):
+            line = pdbFile.readline()
+            if (line.startswith('ATOM')):
+                output[keyNameList[0]].append(int(line[6:11].strip()))
+                output[keyNameList[1]].append(str(line[12:16].strip()))
+                output[keyNameList[2]].append(str(line[17:20].strip()))
+                output[keyNameList[3]].append(int(line[22:26].strip()))
+                output[keyNameList[4]].append(str(line[21]))
+                output[keyNameList[5]].append(float(line[30:38].strip()))
+                output[keyNameList[6]].append(float(line[38:46].strip()))
+                output[keyNameList[7]].append(float(line[46:54].strip()))
+    return (output)
 

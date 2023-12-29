@@ -1,5 +1,5 @@
 # biofkit
-Biofkit is now containing only one module with one package which can transfer pdb into fasta (or a sequence dictionary) very easily. 
+Biofkit is now containing only one module with one package which can deal with pdb file (extract sequence, atom information and so on) very easily. 
 
 ## How to Install
 ### Conda
@@ -27,8 +27,15 @@ pdbKit.pdb2Seq(pdbFilePath: str, fasta: bool = False, fastaLineLen: int = 80) ->
     # fasta: Whether to transfer into fasta file. If false, pdb will only be transferred to a dictionary.{chainId: Seq}
     # fastaLineLen: How many residues are contained in a single line of the fasta, only work when `fasta` is true.
 
-# load the information of all amino-acid-residue atoms into a list which can be converted to a dataframe with famous `pandas`.
-pdbKit.pdb2dfList(pdbFilePath: str, colName: bool = True) -> list[list[int, str, str, int, str, float, float, float]]:
+# load the information of all amino-acid-residue atoms into a list. output[idx] shows the information of an atom.
+pdb2List(pdbFilePath: str, csvPath: str = None, colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
     # pdbFilePath: the file path of the pdb you want to load.
-    # colName: a prepared colname list for the output. If colName is true, pdb can be directly transfer to a pandas dataframe.
+    # csvPath: if given, then write a csv file for your atom information.
+    # colName: a prepared colname list for the output. If colName is true, the output[0] will be such a list shown below. May help when column names are needed.
+    pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+
+# load the information of all amimo-acid-residue atoms into a dictionary, which can be converted into a dataframe with famous `pandas`.
+pdb2Dict(pdbFilePath: str) -> dict[str, list]:
+    # pdbFilePath: the file path of the pdb you want to load.
+
 ```
