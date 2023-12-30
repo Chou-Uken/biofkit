@@ -19,7 +19,7 @@ pip install biofkit
 ## How to Use
 ### ProteinKit
 ```python
-from proteinKit import pdbKit
+from biofkit.proteinKit import pdbKit
 
 # if argument fasta is True, a fasta file will be created in the same path as the pdb file.
 pdbKit.pdb2Seq(pdbFilePath: str, fasta: bool = False, fastaLineLen: int = 80) -> dict[str, str]
