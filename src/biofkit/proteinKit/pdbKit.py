@@ -6,7 +6,7 @@ Sorry for my poor English.
 
 import os
 
-class ProteinKit():
+class ProteinKit:
 
     # Dictionary used to transfer abbreviation with the first letter capitalized to shorter abbreviation.
     aaDictTHREE2One: dict[str, str] = {
@@ -62,10 +62,10 @@ class ProteinKit():
     # X: Orthogonal coordinates for X in angstroms (A).
     # Y: Orthogonal coordinates for Y in angstroms (A).
     # Z: Orthogonal coordinates for Z in angstroms (A).
-    pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+    pdbInfoColumns: list[str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
 
 
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
 
@@ -199,4 +199,5 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
                 output[keyNameList[6]].append(float(line[38:46].strip()))
                 output[keyNameList[7]].append(float(line[46:54].strip()))
     return (output)
+
 
