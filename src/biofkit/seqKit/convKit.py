@@ -19,7 +19,7 @@ class ConvKit:
         'AAT': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K', \
         'AGT': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R', \
         'GTT': 'V', 'GTC': 'V', 'GTA': 'V', 'GTG': 'V', \
-        'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A', \
+        'GCT': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A', \
         'GAT': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E', \
         'GGT': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G'
     }
