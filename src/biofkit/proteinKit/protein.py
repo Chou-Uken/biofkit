@@ -38,7 +38,7 @@ def proList2ProDict(rawList: list) -> dict:
     return (output)
 
 # This new type 'protein' is for operation pdb file.
-class Protein():
+class Protein:
     def __init__(self, pdbFilePath: str, chainId: list[str] = ['all']):
         self.name: str = pdbFilePath.split(os.sep)[-1].rstrip('.pdb')
         self.infoList: list = pdbKit.pdb2List(pdbFilePath)
@@ -54,7 +54,3 @@ class Protein():
     def __repr__(self) -> str:
         return ('{name}: containing Chain {chainList}'.format(name = self.name, chainList = list(set(self.infoDict['ChainId']))))
     
-
-
-if __name__ == '__main__':
-    a4y: Protein = Protein('/home/chouuken/pkg/1A4Y.pdb')

@@ -39,3 +39,27 @@ pdb2Dict(pdbFilePath: str) -> dict[str, list]:
     # pdbFilePath: the file path of the pdb you want to load.
 
 ```
+
+### SeqKit
+```python
+from biofkit.seqKit import convKit
+
+# transcription
+def dna2Rna(dnaSeq: str) -> str:
+    # dnaSeq: the sequence of DNA, a string containing 'A', 'C', 'G', 'T' but without 'U'.
+
+# reverse transcription
+def rna2Dna(rnaSeq: str) -> str:
+    # rnaSeq: the sequence of RNA, a string containing 'A', 'C', 'G', 'U' but without 'T'.
+    
+# DNA translation
+def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
+    # dnaSeq: the sequence of DNA, a string containing 'A', 'C', 'G', 'T' but without 'U'.
+    # start: From where to tranlate into protein.
+    # end: To where to tranlate into protein.
+    
+# RNA tranlation
+def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
+    # dnaSeq: the sequence of DNA, a string containing 'A', 'C', 'G', 'U' but without 'T'.
+    # start: From where to tranlate into protein.
+    # end: To where to tranlate into protein.
