@@ -80,7 +80,7 @@ def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
     i: int = int(start)
     outputList: list[str] = []
     while (i <= end - 2):
-        outputList.append(convKit.dna2ProDict[dnaSeq[i: i+3]])
+        outputList.append(convKit.dna2ProDict[dnaSeq[i: i+3].upper()])
         i += 3
     output: str = ''.join(outputList)
     return(output)
@@ -95,7 +95,7 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
     i: int = int(start)
     outputList: list[str] = []
     while (i <= end - 2):
-        outputList.append(convKit.rna2ProDict[rnaSeq[i: i+3]])
+        outputList.append(convKit.rna2ProDict[rnaSeq[i: i+3].upper()])
         i += 3
     output: str = ''.join(outputList)
     return(output)
