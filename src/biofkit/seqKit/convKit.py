@@ -100,3 +100,104 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
     output: str = ''.join(outputList)
     return(output)
     
+
+# Alignment
+def pairwiseAlign(seqA: str, seqB: str, method: str = 'NW', consoleWidth = 50):
+    assert (len(seqA) * len(seqB) != 0), 'empty string'
+    scoreMatrix: list[list[int]] = []
+    for i in range(len(seqB)+1):
+        scoreMatrix.append([])
+        for j in range(len(seqA)+1):
+            scoreMatrix[i].append(0)
+    # Needleman-Wunsch (NW)
+    # Matrix initiation
+    for rowIdx in range(len(seqB)+1):
+        scoreMatrix[rowIdx][0] = -rowIdx
+    for columnIdx in range(len(seqA)+1):
+        scoreMatrix[0][columnIdx] = -columnIdx
+    # Matrix scan
+    for rowIdx in range(1, len(seqB)+1):
+        for columnIdx in range(1, len(seqA)+1):
+            if (seqB[rowIdx-1] == seqA[columnIdx-1]):
+                scoreMatrix[rowIdx][columnIdx] = max(scoreMatrix[rowIdx-1][columnIdx]-1, \
+                                                     scoreMatrix[rowIdx-1][columnIdx]-1, \
+                                                        scoreMatrix[rowIdx-1][columnIdx-1]+1)
+                
+            else:
+                scoreMatrix[rowIdx][columnIdx] = max(scoreMatrix[rowIdx-1][columnIdx]-1, \
+                                                        scoreMatrix[rowIdx-1][columnIdx]-1, \
+                                                        scoreMatrix[rowIdx-1][columnIdx-1]-1)
+                                                    
+    finalScore = scoreMatrix[-1][-1]
+    # backforward
+    steps: list[str] = []
+    rowIdx = len(seqB)
+    columnIdx = len(seqA)
+    while ((rowIdx != 0) or (columnIdx != 0)):
+
+        if ((rowIdx != 0) and (columnIdx != 0)):
+            bestPathScore = max(scoreMatrix[rowIdx-1][columnIdx], \
+                                scoreMatrix[rowIdx][columnIdx-1], \
+                                    scoreMatrix[rowIdx-1][columnIdx-1])
+            # up-leftward
+            if (bestPathScore == scoreMatrix[rowIdx-1][columnIdx-1]):
+                steps.insert(0, 'c')
+                rowIdx -= 1
+                columnIdx -= 1
+            # upward
+            elif (bestPathScore == scoreMatrix[rowIdx-1][columnIdx]):
+                steps.insert(0, 'd')
+                rowIdx -= 1
+            # leftward
+            else:
+                steps.insert(0, 'r')
+                columnIdx -= 1
+            
+        elif ((rowIdx == 0) and (columnIdx != 0)):
+            steps.insert(0, 'r')
+            columnIdx -= 1
+            
+        else:
+            steps.insert(0, 'd')
+            rowIdx -= 1
+
+    seqAIdx: int = 0
+    seqBIdx: int = 0
+    seqAOut: str = ''
+    seqBOut: str = ''
+    for step in steps:
+        if (step == 'r'):
+            seqAOut += seqA[seqAIdx]
+            seqBOut += '-'
+            seqAIdx += 1
+        elif (step == 'd'):
+            seqAOut += '-'
+            seqBOut += seqB[seqBIdx]
+            seqBIdx += 1
+        else:
+            seqAOut += seqA[seqAIdx]
+            seqBOut += seqB[seqBIdx]
+            seqBIdx += 1
+            seqAIdx += 1
+
+
+    seqAlign: str = ''
+    for idx in range(len(seqAOut)):
+        if (seqAOut[idx] == seqBOut[idx]):
+            seqAlign += '|'
+        else:
+            seqAlign += ' '
+    
+    
+    seqAOut = [seqAOut[i:i+consoleWidth] for i in range(0, len(seqAOut), consoleWidth)]
+    seqAlign = [seqAlign[i:i+consoleWidth] for i in range(0, len(seqAlign), consoleWidth)]
+    seqBOut = [seqBOut[i:i+consoleWidth] for i in range(0, len(seqBOut), consoleWidth)]
+    for idx in range(len(seqAOut)):
+        print(seqAOut[idx])
+        print(seqAlign[idx])
+        print(seqBOut[idx])
+        print()
+
+        
+if __name__ == '__main__':
+    pairwiseAlign('TGTTTGAACGTTTACAGACTAAACTTCACCTGAAATCCTCCCAGCAGAGAGCAAAGGTGGTGCCTCCCTCCCTACAAAACCCCCGTCTGTCTGCAGATTAACCTTTCTCTGGACGGACGGACGGCAGGTGAAGGACGGAG', 'GGCACCATGGCAACCGCTGCAGATCAGAACGTGGAGTTTGTTAGAACCGGCTACGGGAAGAACTCGGTGAAGGTTCTGTTCATCCGGAGGCAGAGGAACCACCACGAGATCATCGAGCTGAAGGCCGACGTGGAGCTGAC')
