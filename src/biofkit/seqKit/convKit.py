@@ -262,7 +262,7 @@ def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: flo
     match (matrix):
         case ('unitary'):
             for rowIdx in range(1, len(seqB)+1):
-                actionArray[0] = [True, False]
+                buffer: list[list[bool]] = [[True, False]]
                 for columnIdx in range(1, len(seqA)+1):
                     # thisR
                     if (actionArray[0][1]):
@@ -287,6 +287,88 @@ def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: flo
                         actionArray[0] = [False, True]
                     else:
                         actionArray[0] = [True, False]
+                    buffer.append(actionArray[0])
+
+                # buffer added into actionArray
+                actionArray = [[True, False], [True, False]]
+                actionArray.extend(buffer)
+                del(buffer)
+
+        case ('blast'):
+            for rowIdx in range(1, len(seqB)+1):
+                buffer: list[list[bool]] = [[True, False]]
+                for columnIdx in range(1, len(seqA)+1):
+                    # thisR
+                    if (actionArray[0][1]):
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapExtend
+                    else:
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapOpen
+                    
+                    # thisD
+                    if (actionArray[columnIdx+1][0]):
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapExtend
+                    else:
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapOpen
+                    
+                    # thisC
+                    thisC: float = scoreMatrix[rowIdx-1][columnIdx-1] + convKit.dnaBlastMatrix[(seqA[columnIdx-1]==seqB[rowIdx-1])]
+
+                    # Action decision
+                    scoreMatrix[rowIdx][columnIdx] = max(thisR, thisD, thisC)
+                    if (thisC == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, False]
+                    elif (thisR == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, True]
+                    else:
+                        actionArray[0] = [True, False]
+                    buffer.append(actionArray[0])
+
+                # buffer added into actionArray
+                actionArray = [[True, False], [True, False]]
+                actionArray.extend(buffer)
+                del(buffer)
+
+        case ('tt'):
+            purine:list[str] = ['A', 'G']
+            pyrimidine:list[str] = ['C', 'T']
+            for rowIdx in range(1, len(seqB)+1):
+                buffer: list[list[bool]] = [[True, False]]
+                for columnIdx in range(1, len(seqA)+1):
+                    # thisR
+                    if (actionArray[0][1]):
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapExtend
+                    else:
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapOpen
+                    
+                    # thisD
+                    if (actionArray[columnIdx+1][0]):
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapExtend
+                    else:
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapOpen
+                    
+                    # thisC
+                    if (seqB[rowIdx-1] == seqA[columnIdx-1]):
+                        thisC: float = scoreMatrix[rowIdx-1][columnIdx-1] + convKit.dnaTTMatrix[True]
+                    elif (((seqB[rowIdx-1] in purine) and (seqA[columnIdx-1] in purine)) or ((seqB[rowIdx-1] in pyrimidine) and seqA[columnIdx-1] in pyrimidine)):
+                        thisC: float = scoreMatrix[rowIdx-1][columnIdx-1] + convKit.dnaTTMatrix['transition']
+                    else:
+                        thisC: float = scoreMatrix[rowIdx-1][columnIdx-1] + convKit.dnaTTMatrix['transversion']
+
+                    # Action decision
+                    scoreMatrix[rowIdx][columnIdx] = max(thisR, thisD, thisC)
+                    if (thisC == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, False]
+                    elif (thisR == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, True]
+                    else:
+                        actionArray[0] = [True, False]
+                    buffer.append(actionArray[0])
+
+                # buffer added into actionArray
+                actionArray = [[True, False], [True, False]]
+                actionArray.extend(buffer)
+                del(buffer)
+
 
     finalScore: float = scoreMatrix[-1][-1]
     # backforward
@@ -356,8 +438,10 @@ def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: flo
         print(seqAOut[idx])
         print(seqAlign[idx])
         print(seqBOut[idx])
-        print()
+    print(finalScore)
 
         
 if __name__ == '__main__':
-    pairwiseDnaAlign('TGTTTGAACGTTTACAGACTAAACTTCACCTGAAATCCTCCCAGCAGAGAGCAAAGGTGGTGCCTCCCTCCCTACAAAACCCCCGTCTGTCTGCAGATTAACCTTTCTCTGGACGGACGGACGGCAGGTGAAGGACGGAG', 'GGCACCATGGCAACCGCTGCAGATCAGAACGTGGAGTTTGTTAGAACCGGCTACGGGAAGAACTCGGTGAAGGTTCTGTTCATCCGGAGGCAGAGGAACCACCACGAGATCATCGAGCTGAAGGCCGACGTGGAGCTGAC')
+    a = 'GTCCTGGTCCTCTAC-G--CCG-A--CCTCG----AGGACGCTC---TCG'
+    b = 'GTCC-G--CCCCGACAGAACCGCAAGCC-CGCGCCAGGA-GCTCCTATCGATCC'
+    pairwiseDnaAlign(a, b)
