@@ -60,7 +60,6 @@ class ConvKit:
     # BLAST matrix
     dnaBlastMatrix: dict[bool] = {True: 5, False: -4}
 
-
     # Protein Substitution Matrix
     # Unitary matrix
     protUnitaryMatrix: dict[bool, int] = {True: 1, False: 0}
@@ -189,14 +188,14 @@ class ConvKit:
 def dna2Rna(dnaSeq: str) -> str:
     convKit: ConvKit = ConvKit()
     output = dnaSeq.upper().translate(str.maketrans(convKit.dna2RnaDict))
-    return(output)
+    return (output)
 
 
 # reverse transcription
 def rna2Dna(rnaSeq: str) -> str:
     convKit: ConvKit = ConvKit()
     output = rnaSeq.upper().translate(str.maketrans(convKit.rna2DnaDict))
-    return(output)
+    return (output)
 
 
 # DNA translation
@@ -211,7 +210,7 @@ def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
         outputList.append(convKit.dna2ProDict[dnaSeq[i: i+3].upper()])
         i += 3
     output: str = ''.join(outputList)
-    return(output)
+    return (output)
 
 
 # RNA translation
@@ -226,37 +225,70 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
         outputList.append(convKit.rna2ProDict[rnaSeq[i: i+3].upper()])
         i += 3
     output: str = ''.join(outputList)
-    return(output)
+    return (output)
     
 
 # Alignment
-def pairwiseAlign(seqA: str, seqB: str, method: str = 'NW', consoleWidth = 50):
-    assert (len(seqA) * len(seqB) != 0), 'empty string'
-    scoreMatrix: list[list[int]] = []
+def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    seqA = seqA.upper()
+    seqB = seqB.upper()
+    # sequence cleaning (remove elements excluding [A, C, G, T])
+    def dnaSeqClean(seq: str) -> str:
+        seqOut: str = ''.join(list(map(lambda x:x if (x in ['A', 'C', 'G', 'T']) else '', seq)))
+        return (seqOut)
+    
+    seqA = dnaSeqClean(seq=seqA)
+    seqB = dnaSeqClean(seq=seqB)
+    assert (len(seqA) * len(seqB) != 0), 'empty string or not DNA sequence'
+        
+    convKit: ConvKit = ConvKit()
+    scoreMatrix: list[list[float]] = []
     for i in range(len(seqB)+1):
         scoreMatrix.append([])
         for j in range(len(seqA)+1):
             scoreMatrix[i].append(0)
     # Needleman-Wunsch (NW)
+            
     # Matrix initiation
-    for rowIdx in range(len(seqB)+1):
-        scoreMatrix[rowIdx][0] = -rowIdx
-    for columnIdx in range(len(seqA)+1):
-        scoreMatrix[0][columnIdx] = -columnIdx
-    # Matrix scan
     for rowIdx in range(1, len(seqB)+1):
-        for columnIdx in range(1, len(seqA)+1):
-            if (seqB[rowIdx-1] == seqA[columnIdx-1]):
-                scoreMatrix[rowIdx][columnIdx] = max(scoreMatrix[rowIdx-1][columnIdx]-1, \
-                                                     scoreMatrix[rowIdx-1][columnIdx]-1, \
-                                                        scoreMatrix[rowIdx-1][columnIdx-1]+1)
-                
-            else:
-                scoreMatrix[rowIdx][columnIdx] = max(scoreMatrix[rowIdx-1][columnIdx]-1, \
-                                                        scoreMatrix[rowIdx-1][columnIdx]-1, \
-                                                        scoreMatrix[rowIdx-1][columnIdx-1]-1)
-                                                    
-    finalScore = scoreMatrix[-1][-1]
+        scoreMatrix[rowIdx][0] = gapOpen + gapExtend * (rowIdx - 1)
+    for columnIdx in range(len(seqA)+1):
+        scoreMatrix[0][columnIdx] = gapOpen + gapExtend * (columnIdx - 1)
+    
+    actionArray: list[list[bool]] = [[False, True] for columnIdx in range(len(seqA)+2)]
+    actionArray[0] = [True, False]
+
+    # Matrix scanning
+    match (matrix):
+        case ('unitary'):
+            for rowIdx in range(1, len(seqB)+1):
+                actionArray[0] = [True, False]
+                for columnIdx in range(1, len(seqA)+1):
+                    # thisR
+                    if (actionArray[0][1]):
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapExtend
+                    else:
+                        thisR: float = scoreMatrix[rowIdx][columnIdx-1] + gapOpen
+                    
+                    # thisD
+                    if (actionArray[columnIdx+1][0]):
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapExtend
+                    else:
+                        thisD: float = scoreMatrix[rowIdx-1][columnIdx] + gapOpen
+                    
+                    # thisC
+                    thisC: float = scoreMatrix[rowIdx-1][columnIdx-1] + convKit.dnaUnitaryMatrix[(seqA[columnIdx-1]==seqB[rowIdx-1])]
+
+                    # Action decision
+                    scoreMatrix[rowIdx][columnIdx] = max(thisR, thisD, thisC)
+                    if (thisC == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, False]
+                    elif (thisR == max(thisR, thisD, thisC)):
+                        actionArray[0] = [False, True]
+                    else:
+                        actionArray[0] = [True, False]
+
+    finalScore: float = scoreMatrix[-1][-1]
     # backforward
     steps: list[str] = []
     rowIdx = len(seqB)
@@ -328,4 +360,4 @@ def pairwiseAlign(seqA: str, seqB: str, method: str = 'NW', consoleWidth = 50):
 
         
 if __name__ == '__main__':
-    pairwiseAlign('TGTTTGAACGTTTACAGACTAAACTTCACCTGAAATCCTCCCAGCAGAGAGCAAAGGTGGTGCCTCCCTCCCTACAAAACCCCCGTCTGTCTGCAGATTAACCTTTCTCTGGACGGACGGACGGCAGGTGAAGGACGGAG', 'GGCACCATGGCAACCGCTGCAGATCAGAACGTGGAGTTTGTTAGAACCGGCTACGGGAAGAACTCGGTGAAGGTTCTGTTCATCCGGAGGCAGAGGAACCACCACGAGATCATCGAGCTGAAGGCCGACGTGGAGCTGAC')
+    pairwiseDnaAlign('TGTTTGAACGTTTACAGACTAAACTTCACCTGAAATCCTCCCAGCAGAGAGCAAAGGTGGTGCCTCCCTCCCTACAAAACCCCCGTCTGTCTGCAGATTAACCTTTCTCTGGACGGACGGACGGCAGGTGAAGGACGGAG', 'GGCACCATGGCAACCGCTGCAGATCAGAACGTGGAGTTTGTTAGAACCGGCTACGGGAAGAACTCGGTGAAGGTTCTGTTCATCCGGAGGCAGAGGAACCACCACGAGATCATCGAGCTGAAGGCCGACGTGGAGCTGAC')
