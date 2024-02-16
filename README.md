@@ -44,6 +44,10 @@ pdb2Dict(pdbFilePath: str) -> dict[str, list]:
 ```python
 from biofkit.seqKit import convKit
 
+# Read fasta files and generate a dictionary whose keys are taxonomy and values are sequences
+def readFasta(fastaFilePath: str) -> dict[str, str]:
+    # fastaFilePath: the path of your fasta file.
+
 # transcription
 def dna2Rna(dnaSeq: str) -> str:
     # dnaSeq: the sequence of DNA, a string containing 'A', 'C', 'G', 'T' but without 'U'.
@@ -63,3 +67,21 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
     # dnaSeq: the sequence of DNA, a string containing 'A', 'C', 'G', 'U' but without 'T'.
     # start: From where to tranlate into protein.
     # end: To where to tranlate into protein.
+
+# DNA pairwise alignment
+def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    # fasta: the path of your fasta file.
+    # seqA/B: If fasta file is not provided, seqA/B must be given.
+    # matrix: Scoring matrix('unitary', 'blast', 'tt'(transition-transversion)).
+    # gapOpen: punishment got when a gap opened.
+    # gaoExtend: punishment got when a gap extended.
+    # consoleWidth: How many bases printed in a line.
+
+# Protein pairwise alignment
+def pairwiseProtAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTT', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    # fasta: the path of your fasta file.
+    # seqA/B: If fasta file is not provided, seqA/B must be given.
+    # matrix: Scoring matrix('unitary', 'pam250', 'blosum62').
+    # gapOpen: punishment got when a gap opened.
+    # gaoExtend: punishment got when a gap extended.
+    # consoleWidth: How many bases printed in a line.

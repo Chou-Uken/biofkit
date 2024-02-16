@@ -287,6 +287,28 @@ class ConvKit:
         pass
         
 
+# Read fasta files
+def readFasta(fastaFilePath: str) -> dict[str, str]:
+    outputDict: dict[str, str] = {}
+    with open(file=fastaFilePath, mode='r') as f:
+        line: str = f.readline()
+        tax: str = ''
+        seq: str = ''
+        if (line.startswith('>')):
+            tax = line.lstrip('>').rstrip('\n')
+        while (line):
+            line = f.readline()
+            if (line.startswith('>')):
+                if (tax != ''):
+                    outputDict[tax] = seq
+                tax = line.lstrip('>').rstrip('\n')
+                seq = ''
+            else:
+                seq += line.rstrip('\n')
+        outputDict[tax] = seq
+    return (outputDict)
+
+
 # transcription
 def dna2Rna(dnaSeq: str) -> str:
     convKit: ConvKit = ConvKit()
@@ -332,7 +354,11 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
     
 
 # Alignment
-def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    if (fasta != ''):
+        sequences: dict[str, str] = readFasta(fastaFilePath=fasta)
+    seqA: str = list(sequences.values())[0]
+    seqB: str = list(sequences.values())[1]
     seqA = seqA.upper()
     seqB = seqB.upper()
     # sequence cleaning (remove elements excluding [A, C, G, T])
@@ -547,7 +573,12 @@ def pairwiseDnaAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: flo
     print(finalScore)
 
 
-def pairwiseProtAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+def pairwiseProtAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTT', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    if (fasta != ''):
+        sequences: dict[str, str] = readFasta(fastaFilePath=fasta)
+    seqA: str = list(sequences.values())[0]
+    seqB: str = list(sequences.values())[1]
+
     seqA = seqA.upper()
     seqB = seqB.upper()
         
@@ -786,7 +817,4 @@ def pairwiseProtAlign(seqA: str, seqB: str, matrix: str = 'unitary', gapOpen: fl
     print(finalScore)
 
     
-if __name__ == '__main__':
-    a = 'GTCCaiuihbd'
-    b = 'GTCC'
-    pairwiseProtAlign(a, b, matrix='blosum6')
+
