@@ -1,5 +1,5 @@
 '''
-This script was created on Dec 16th, 2023 by Zhang Yujian as a doctoral candidate in Institute of Zoology, CAS.
+This script was created on Dec 17th, 2023 by Zhang Yujian as a doctoral candidate in Institute of Zoology, CAS.
 Thanks for using. Please report bugs (if any) at zhangyujian23@mails.ucas.ac.cn.
 Sorry for my poor English.
 '''
@@ -142,7 +142,7 @@ def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80)
 # load the information of all amino-acid-residue atoms into a list. output[idx] shows the information of an atom.
 def pdb2List(pdbFilePath: str, csvPath: str = None, colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
     output: list[list] = []
-    # pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
+    # pdbInfoColumns: list = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
     if (colName):
         proteinKit: ProteinKit = ProteinKit()
         output.append(proteinKit.pdbInfoColumns)
@@ -201,3 +201,10 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
     return (output)
 
 
+
+# load PDB file
+def readPDB(pdbFilePath: str) -> list[dict]:
+    # [{'Serial': int, 'Atom': str, 'ResName': str, 'ResSeq': int, \
+    #   'ChainId': str, 'X': float, 'Y': float, 'Z': float}, ...]
+    proteinKit: ProteinKit()
+    
