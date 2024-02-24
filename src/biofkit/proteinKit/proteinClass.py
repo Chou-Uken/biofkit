@@ -65,6 +65,18 @@ class Peptide(object):
     def __repr__(self) -> str:
         return ('Chain {name}: {seq}'.format(name=self.ChainId, seq=''.join([i.getName() for i in self.ResSet])))
 
+    def __len__(self) -> int:
+        return (len(self.ResSet))
+
+    def getChainId(self) -> str:
+        return (self.ChainId)
+    
+    def cut(self, end: int, beginning: int = 0, newChainId: str = 'X'):
+        if ((beginning == 0) and (end == len(self.ResSet))):
+            print('An identical peptide is created!')
+        return (Peptide(resList=self.ResSet[beginning: end], chainId=newChainId))
+        
+
 
 class Protein(object):
     def __init__(self, pepList: list[Peptide], proteinName: str = 'Unnamed'):
@@ -83,7 +95,29 @@ class Protein(object):
             self.PepSet: list[Peptide] = pepList
             
     def __str__(self) -> str:
-        return (str(self.PepSet))
+        return (self.name + ': ' + str(self.PepSet))
 
     def __repr__(self) -> str:
-        return (str(self.PepSet))
+        return (self.name + ': ' + str(self.PepSet))
+
+    def pick(self, chainId: str) -> list[Peptide]:
+        output: list[Peptide] = []
+        for peptide in self.PepSet:
+            if (peptide.getChainId() == chainId):
+                output.append(peptide)
+        return (output)
+    
+
+if __name__ == '__main__':
+    a = Atom(1, 'CA', 1.2, 1.2, 1.2)
+    aL = [a,a,a,a,a,a]
+    b = Residue(aL, 0, 'G')
+    bL = [b,b,b,b,b,b]
+    c = Peptide(bL, 'A')
+    ca = Peptide(bL, 'B')
+    cL = [c,c,c,c,c,c, ca,ca]
+    d = Protein(cL, 'POLA')
+    print(a, b, c, d)
+    d.pick('B')
+    print(d.pick('B'))
+    print(c.cut(6))

@@ -203,8 +203,74 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
 
 
 # load PDB file
-def readPDB(pdbFilePath: str) -> list[dict]:
-    # [{'Serial': int, 'Atom': str, 'ResName': str, 'ResSeq': int, \
-    #   'ChainId': str, 'X': float, 'Y': float, 'Z': float}, ...]
-    proteinKit: ProteinKit()
-    
+from proteinClass import Atom, Residue, Peptide, Protein
+def readPDB(pdbFile: str) -> Protein:
+    with open(file=pdbFile, mode='r') as pdb:
+        atomBuffer: list[Atom] = []
+        residueBuffer: list[Residue] = []
+        peptideBuffer: list[Peptide] = []
+        resSeq: int = 0
+        resName: str = ''
+        chainId: str = ''
+        line: str = pdb.readline()
+        if (line.startswith('ATOM')):
+            atomBuffer.append(Atom(serial=int(line[6:11].strip()), atom=str(line[12:16].strip()), x=float(line[30:38].strip()), y=float(line[38:46].strip()), z=float(line[46:54].strip())))
+            resName = str(line[17:20].strip())
+            resSeq = int(line[22:26].strip())
+            chainId = str(line[21])
+        while (line):
+            line = pdb.readline()
+            if (line.startswith('ATOM')):
+                if ((not chainId) or (str(line[21]==chainId))):
+                    # Chain continue
+                    if ((not resSeq) or (str(line[22:26].strip())==resSeq)):
+                        # Residue continue
+                        resName = str(line[17:20].strip())
+                        resSeq = int(line[22:26].strip())
+                        chainId = str(line[21])
+                        atomBuffer.append(Atom(serial=int(line[6:11].strip()), atom=str(line[12:16].strip()), x=float(line[30:38].strip()), y=float(line[38:46].strip()), z=float(line[46:54])))
+                    else:
+                        # Residue TER
+                        residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                        # Initiate atomBuffer
+                        atomBuffer = []
+                        # Read new atom properties
+                        atomBuffer.append(Atom(serial=int(line[6:11].strip()), atom=str(line[12:16].strip()), x=float(line[30:38].strip()), y=float(line[38:46].strip()), z=float(line[46:54].strip())))
+                        # Read new residue/chain properties
+                        resSeq = int(line[22:26].strip())
+                        resName = str(line[17:20].strip())
+                        chainId = str(line[21])
+                        print(line[6:11].strip())
+                else:
+                    # Chain TER/Residue TER
+                    residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                    peptideBuffer.append(Peptide(resList=residueBuffer, chainId=chainId))
+                    # Initiate atomBuffer/residueBuffer
+                    atomBuffer = []
+                    residueBuffer = []
+                    # Read new atom properties
+                    atomBuffer.append(Atom(serial=int(line[6:11].strip()), atom=str(line[12:16].strip()), x=float(line[30:38].strip()), y=float(line[38:46].strip()), z=float(line[46:54].strip())))
+                    # Read new residue/chain properties
+                    resSeq = int(line[22:26].strip())
+                    resName = str(line[17:20].strip())
+                    chainId = str(line[21])
+        
+        if (not atomBuffer):
+            residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+            peptideBuffer.append(Peptide(resList=residueBuffer, chainId=chainId))
+            protein: Protein = Protein(pepList=peptideBuffer, proteinName=pdbFile.split(os.sep)[-1].rstrip('.pdb'))
+        else:
+            try:
+                peptideBuffer.append(Peptide(resList=residueBuffer, chainId=chainId))
+            except Exception:
+                pass
+            finally:
+                protein: Protein = Protein(pepList=peptideBuffer, proteinName=pdbFile.split(os.sep)[-1].rstrip('.pdb'))
+        return (protein)
+
+
+if __name__ == '__main__':
+    a = readPDB('/home/chouuken/111M_A.pdb')
+    print(a.PepSet)
+    print(len(a.PepSet[0]))
+
