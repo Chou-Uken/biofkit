@@ -106,18 +106,4 @@ class Protein(object):
             if (peptide.getChainId() == chainId):
                 output.append(peptide)
         return (output)
-    
 
-if __name__ == '__main__':
-    a = Atom(1, 'CA', 1.2, 1.2, 1.2)
-    aL = [a,a,a,a,a,a]
-    b = Residue(aL, 0, 'G')
-    bL = [b,b,b,b,b,b]
-    c = Peptide(bL, 'A')
-    ca = Peptide(bL, 'B')
-    cL = [c,c,c,c,c,c, ca,ca]
-    d = Protein(cL, 'POLA')
-    print(a, b, c, d)
-    d.pick('B')
-    print(d.pick('B'))
-    print(c.cut(6))
