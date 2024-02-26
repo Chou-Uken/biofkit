@@ -73,7 +73,7 @@ class ProteinKit:
 # transfer protein structure file (pdb) into sequence string.
 def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80) -> dict[str, str]:
     proteinKit: ProteinKit = ProteinKit()
-    with open(file=pdbFilePath) as pdbFile:
+    with open(file=pdbFilePath, mode='r') as pdbFile:
         thisChainId: str = 'defined'
         line: str = pdbFile.readline()
         chainSeq: str = ''
@@ -205,6 +205,7 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
 # load PDB file
 from proteinClass import Atom, Residue, Peptide, Protein
 def readPDB(pdbFile: str) -> Protein:
+    proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFile, mode='r') as pdb:
         atomBuffer: list[Atom] = []
         residueBuffer: list[Residue] = []
@@ -221,9 +222,9 @@ def readPDB(pdbFile: str) -> Protein:
         while (line):
             line = pdb.readline()
             if (line.startswith('ATOM')):
-                if ((not chainId) or (str(line[21]==chainId))):
+                if ((not chainId) or (str(line[21])==chainId)):
                     # Chain continue
-                    if ((not resSeq) or (str(line[22:26].strip())==resSeq)):
+                    if ((not resSeq) or (int(line[22:26].strip())==resSeq)):
                         # Residue continue
                         resName = str(line[17:20].strip())
                         resSeq = int(line[22:26].strip())
@@ -231,7 +232,13 @@ def readPDB(pdbFile: str) -> Protein:
                         atomBuffer.append(Atom(serial=int(line[6:11].strip()), atom=str(line[12:16].strip()), x=float(line[30:38].strip()), y=float(line[38:46].strip()), z=float(line[46:54])))
                     else:
                         # Residue TER
-                        residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                        try:
+                            residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=proteinKit.aaDictTHREE2One[resName]))
+                        except (KeyError):
+                            residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                        except (Exception) as e:
+                            print(e)
+                            raise
                         # Initiate atomBuffer
                         atomBuffer = []
                         # Read new atom properties
@@ -240,10 +247,15 @@ def readPDB(pdbFile: str) -> Protein:
                         resSeq = int(line[22:26].strip())
                         resName = str(line[17:20].strip())
                         chainId = str(line[21])
-                        print(line[6:11].strip())
                 else:
                     # Chain TER/Residue TER
-                    residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                    try:
+                        residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=proteinKit.aaDictTHREE2One[resName]))
+                    except (KeyError):
+                        residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+                    except (Exception) as e:
+                        print(e)
+                        raise
                     peptideBuffer.append(Peptide(resList=residueBuffer, chainId=chainId))
                     # Initiate atomBuffer/residueBuffer
                     atomBuffer = []
@@ -254,9 +266,8 @@ def readPDB(pdbFile: str) -> Protein:
                     resSeq = int(line[22:26].strip())
                     resName = str(line[17:20].strip())
                     chainId = str(line[21])
-        
         if (not atomBuffer):
-            residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=resName))
+            residueBuffer.append(Residue(atomList=atomBuffer, resSeq=resSeq, resName=proteinKit.aaDictTHREE2One[resName]))
             peptideBuffer.append(Peptide(resList=residueBuffer, chainId=chainId))
             protein: Protein = Protein(pepList=peptideBuffer, proteinName=pdbFile.split(os.sep)[-1].rstrip('.pdb'))
         else:
@@ -267,10 +278,4 @@ def readPDB(pdbFile: str) -> Protein:
             finally:
                 protein: Protein = Protein(pepList=peptideBuffer, proteinName=pdbFile.split(os.sep)[-1].rstrip('.pdb'))
         return (protein)
-
-
-if __name__ == '__main__':
-    a = readPDB('/home/chouuken/111M_A.pdb')
-    print(a.PepSet)
-    print(len(a.PepSet[0]))
-
+    
