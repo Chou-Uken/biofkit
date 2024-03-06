@@ -49,7 +49,7 @@ def proListIsValid(proList: list) -> bool:
             if ((type(atomInfo[0]) != int) or (type(atomInfo[1]) != str) or \
                 (type(atomInfo[2]) != str) or (type(atomInfo[3]) != int) or \
                 (type(atomInfo[4]) != str) or (type(atomInfo[5]) != float) or \
-                (type(atomInfo[6]) != float) or (type(atomInfo[7]) != float):
+                (type(atomInfo[6]) != float) or (type(atomInfo[7]) != float)):
                 raise (TypeError)
     except (IndexError):
         print('Uncomplete information for some atom!')
@@ -81,7 +81,7 @@ def proDictIsValid(proDict: dict) -> bool:
             any([type(i) != str for i in proDict['ChainId']]) or \
             any([type(i) != float for i in proDict['X']]) or \
             any([type(i) != float for i in proDict['Y']]) or \
-            any([type(i) != float for i in proDict['Z']]):
+            any([type(i) != float for i in proDict['Z']])):
             raise (TypeError)
     except (IndexError):
         print('Uncomplete information for some atom!')
