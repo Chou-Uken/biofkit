@@ -5,6 +5,7 @@ Sorry for my poor English.
 '''
 
 import os
+from biofkit.proteinKit.proteinClass import Atom, Residue, Peptide, Protein
 
 class ProteinKit:
 
@@ -203,7 +204,6 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
 
 
 # load PDB file
-from proteinClass import Atom, Residue, Peptide, Protein
 def readPDB(pdbFile: str) -> Protein:
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFile, mode='r') as pdb:

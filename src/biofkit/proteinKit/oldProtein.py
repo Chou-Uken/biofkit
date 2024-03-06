@@ -5,7 +5,7 @@ Sorry for my poor English.
 '''
 
 import os
-import pdbKit
+from biofkit.proteinKit import pdbKit
 
 # This funtion 'proDict2ProList' is used to tranfer pdbDict into pdbList.
 def proDict2ProList(rawDict: dict) -> list:

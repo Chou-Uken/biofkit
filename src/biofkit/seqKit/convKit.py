@@ -58,7 +58,7 @@ class ConvKit:
     dnaTTMatrix: dict[str, int] = {True: 1, 'transition': -1, 'transversion': -5}
 
     # BLAST matrix
-    dnaBlastMatrix: dict[bool] = {True: 5, False: -4}
+    dnaBlastMatrix: dict[bool, int] = {True: 5, False: -4}
 
     # Protein Substitution Matrix
     # Unitary matrix
