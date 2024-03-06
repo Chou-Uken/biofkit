@@ -162,7 +162,7 @@ def proListIsValid(proList: list) -> bool:
     try:
         for atomInfo in proList:
             # form test:
-            if (len(atomInfo != 8)):
+            if (len(atomInfo) != 8):
                 raise (IndexError)
             # type test:
             if ((type(atomInfo[0]) != int) or (type(atomInfo[1]) != str) or \
