@@ -73,6 +73,17 @@ class ProteinKit:
 
 # transfer protein structure file (pdb) into sequence string.
 def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80) -> dict[str, str]:
+    """Extract sequence information from a PDB file.
+    
+    Args:
+        pdbFilePath (str): Path of PDB file.
+        fastaFilePath (str): FASTA file file output. None for nothing to create.
+        fastaLineLen (int): How many residue letter each line.
+
+    Returns:
+        dict[str, str]: Key is chainId. Value is sequence.
+    """
+
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFilePath, mode='r') as pdbFile:
         thisChainId: str = 'defined'
