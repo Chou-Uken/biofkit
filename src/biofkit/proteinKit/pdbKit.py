@@ -5,6 +5,7 @@ Sorry for my poor English.
 '''
 
 import os
+from biofkit.proteinKit.proteinClass import Atom, Residue, Peptide, Protein
 
 class ProteinKit:
 
@@ -139,71 +140,8 @@ def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80)
 
 
 
-# load the information of all amino-acid-residue atoms into a list. output[idx] shows the information of an atom.
-def pdb2List(pdbFilePath: str, csvPath: str = None, colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
-    output: list[list] = []
-    # pdbInfoColumns: list = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
-    if (colName):
-        proteinKit: ProteinKit = ProteinKit()
-        output.append(proteinKit.pdbInfoColumns)
-    with open(file=pdbFilePath, mode='r') as pdbFile:
-        line: str = pdbFile.readline()
-        if (line.startswith('ATOM')):
-            output.append([int(line[6:11].strip()), str(line[12:16].strip()), \
-                            str(line[17:20].strip()), int(line[22:26].strip()), \
-                            str(line[21]), float(line[30:38].strip()), \
-                            float(line[38:46].strip()), float(line[46:54])])
-        while (line):
-            line = pdbFile.readline()
-            if (line.startswith('ATOM')):
-                output.append([int(line[6:11].strip()), str(line[12:16].strip()), \
-                            str(line[17:20].strip()), int(line[22:26].strip()), \
-                            str(line[21]), float(line[30:38].strip()), \
-                            float(line[38:46].strip()), float(line[46:54])])
-    # output the csv file.
-    if (csvPath is not None):
-        for atomListIdx in range(len(output)):
-            output[atomListIdx] = list(map(str, output[atomListIdx]))
-        with open(file=csvPath, mode='w') as csvFile:
-            csvFile.writelines([','.join(atomInfoList)+'\n' for atomInfoList in output])
-    return (output)
-
-
-
-# load the information of all amimo-acid-residue atoms into a dictionary, which can be converted into a dataframe with famous `pandas`.
-def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
-    # pdbInfoColumns: [str] = ['Serial', 'Atom', 'ResName', 'ResSeq', 'ChainId', 'X', 'Y', 'Z']
-    proteinKit: ProteinKit = ProteinKit()
-    keyNameList: list[str] = proteinKit.pdbInfoColumns
-    output: dict[str, list] = {keyName: [] for keyName in keyNameList}
-    with open(file=pdbFilePath, mode='r') as pdbFile:
-        line: str = pdbFile.readline()
-        if (line.startswith('ATOM')):
-            output[keyNameList[0]].append(int(line[6:11].strip()))
-            output[keyNameList[1]].append(str(line[12:16].strip()))
-            output[keyNameList[2]].append(str(line[17:20].strip()))
-            output[keyNameList[3]].append(int(line[22:26].strip()))
-            output[keyNameList[4]].append(str(line[21]))
-            output[keyNameList[5]].append(float(line[30:38].strip()))
-            output[keyNameList[6]].append(float(line[38:46].strip()))
-            output[keyNameList[7]].append(float(line[46:54].strip()))
-        while (line):
-            line = pdbFile.readline()
-            if (line.startswith('ATOM')):
-                output[keyNameList[0]].append(int(line[6:11].strip()))
-                output[keyNameList[1]].append(str(line[12:16].strip()))
-                output[keyNameList[2]].append(str(line[17:20].strip()))
-                output[keyNameList[3]].append(int(line[22:26].strip()))
-                output[keyNameList[4]].append(str(line[21]))
-                output[keyNameList[5]].append(float(line[30:38].strip()))
-                output[keyNameList[6]].append(float(line[38:46].strip()))
-                output[keyNameList[7]].append(float(line[46:54].strip()))
-    return (output)
-
-
 
 # load PDB file
-from proteinClass import Atom, Residue, Peptide, Protein
 def readPDB(pdbFile: str) -> Protein:
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFile, mode='r') as pdb:
