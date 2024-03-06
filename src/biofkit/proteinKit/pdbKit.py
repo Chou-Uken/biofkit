@@ -154,6 +154,14 @@ def pdb2Seq(pdbFilePath: str, fastaFilePath: str = None, fastaLineLen: int = 80)
 
 # load PDB file
 def readPDB(pdbFile: str) -> Protein:
+    """Load PDB file to get a Protein.
+    Args:
+        pdbFile (str): PDB file path.
+
+    Returns:
+        Protein: Class Protein in proteinClass.py
+    """
+
     proteinKit: ProteinKit = ProteinKit()
     with open(file=pdbFile, mode='r') as pdb:
         atomBuffer: list[Atom] = []
