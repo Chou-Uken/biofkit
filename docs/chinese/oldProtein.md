@@ -2,15 +2,17 @@
 sort: 2
 ---
 
+# Module - oldProtein
+
 这个`module`仅在alpha开发时期维护，在初期作为权宜之计创建。
 
-# 导入
+## 导入
 ```python3
 from biofkit.proteinKit import oldProtein
 ```
 
-# PDB文件读取
-## Function - pdb2List
+## PDB文件读取
+### Function - pdb2List
 加载PDB文件并返回一个列表，输出列表由若干个表示单个原子信息的列表构成，子列表的元素顺序为`[原子序号(int), 原子类型(str), 残基名(str), 残基标号(int), 链名(str), X坐标(float), Y坐标(float), Z坐标(float)]`。
 ```python3
 def pdb2List(pdbFilePath: str, csvPath: str = '', colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
@@ -29,7 +31,7 @@ def pdb2List(pdbFilePath: str, csvPath: str = '', colName: bool = False) -> list
 proList = pdb2List(pdbFilePath='~/example.pdb')
 ```
 
-## Function - pdb2Dict
+### Function - pdb2Dict
 加载PDB文件并输出一个字典，键为原子的属性，值为所有原子该属性组成的列表。`{'Serial: [], 'Atom': [], 'ResName': [], 'ResSeq': [], 'ChainId': [], 'X': [], 'Y': [], 'Z': []}`
 ```python3
 def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
@@ -46,7 +48,7 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
 proDict = pdb2Dict(pdbFilePath='~/example.pdb')
 ```
 
-## Function - proDict2ProList
+### Function - proDict2ProList
 把一个包含蛋白结构的字典转换为列表，函数包含了查错机制。
 ```python3
 def proDict2ProList(rawDict: dict) -> list:
@@ -59,4 +61,6 @@ def proDict2ProList(rawDict: dict) -> list:
     dict：蛋白字典
   """
 ```
+
+### Function - proList2ProDict
 {% include list.liquid %}
