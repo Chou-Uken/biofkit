@@ -1,0 +1,19 @@
+---
+sort: 2
+---
+
+这个`module`仅在alpha开发时期维护，在初期作为权宜之计创建。
+
+# 导入
+```python3
+from biofkit.proteinKit import oldProtein
+```
+
+# PDB文件读取
+## Function - pdb2List
+加载PDB文件并返回一个列表，输出列表由若干个表示单个原子信息的列表构成，子列表的元素顺序为`[原子序号(int), 原子类型(str), 残基名(str), 残基标号(int), 链名(str), X坐标(float), Y坐标(float), Z坐标(float)]`
+```python3
+
+```
+
+{% include list.liquid %}
