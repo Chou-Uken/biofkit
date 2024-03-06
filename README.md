@@ -17,4 +17,6 @@ pip install biofkit
 ```
 
 ## How to Use
-Document is now being built. 
+Documents will help you!
+[中文文档](https://chou-uken.github.io/biofkit/chinese/)
+Waiting for more languages...
