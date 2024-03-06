@@ -100,17 +100,20 @@ def proDict2ProList(rawDict: dict) -> list:
         list: Protein structure information with form of list.
     """
 
-    output: list = [[] for count in range(len(rawDict['Serial']))]
-    for atomIdx in range(len(rawDict['Serial'])):
-        output[atomIdx].append(rawDict['Serial'][atomIdx])
-        output[atomIdx].append(rawDict['Atom'][atomIdx])
-        output[atomIdx].append(rawDict['ResName'][atomIdx])
-        output[atomIdx].append(rawDict['ResSeq'][atomIdx])
-        output[atomIdx].append(rawDict['ChainId'][atomIdx])
-        output[atomIdx].append(rawDict['X'][atomIdx])
-        output[atomIdx].append(rawDict['Y'][atomIdx])
-        output[atomIdx].append(rawDict['Z'][atomIdx])
-    return (output)
+    if (proDictIsValid(rawDict)):
+        output: list = [[] for count in range(len(rawDict['Serial']))]
+        for atomIdx in range(len(rawDict['Serial'])):
+            output[atomIdx].append(rawDict['Serial'][atomIdx])
+            output[atomIdx].append(rawDict['Atom'][atomIdx])
+            output[atomIdx].append(rawDict['ResName'][atomIdx])
+            output[atomIdx].append(rawDict['ResSeq'][atomIdx])
+            output[atomIdx].append(rawDict['ChainId'][atomIdx])
+            output[atomIdx].append(rawDict['X'][atomIdx])
+            output[atomIdx].append(rawDict['Y'][atomIdx])
+            output[atomIdx].append(rawDict['Z'][atomIdx])
+        return (output)
+    else:
+        return ([])
 
 # This function 'proList2ProDIct' is used to tranfer pdbList into pdbDict.
 def proList2ProDict(rawList: list) -> dict:
@@ -122,18 +125,22 @@ def proList2ProDict(rawList: list) -> dict:
     Returns:
         dict: Protein structure information in form of dictionary.
     """
-    output: dict = {'Serial': [], 'Atom': [], 'ResName': [], 'ResSeq': [], \
+
+    if (proListIsValid(rawList)):
+        output: dict = {'Serial': [], 'Atom': [], 'ResName': [], 'ResSeq': [], \
                     'ChainId': [], 'X': [], 'Y': [], 'Z': []}
-    for atomIdx in range(len(rawList)):
-        output['Serial'].append(rawList[atomIdx][0])
-        output['Atom'].append(rawList[atomIdx][1])
-        output['ResName'].append(rawList[atomIdx][2])
-        output['ResSeq'].append(rawList[atomIdx][3])
-        output['ChainId'].append(rawList[atomIdx][4])
-        output['X'].append(rawList[atomIdx][5])
-        output['Y'].append(rawList[atomIdx][6])
-        output['Z'].append(rawList[atomIdx][7])
-    return (output)
+        for atomIdx in range(len(rawList)):
+            output['Serial'].append(rawList[atomIdx][0])
+            output['Atom'].append(rawList[atomIdx][1])
+            output['ResName'].append(rawList[atomIdx][2])
+            output['ResSeq'].append(rawList[atomIdx][3])
+            output['ChainId'].append(rawList[atomIdx][4])
+            output['X'].append(rawList[atomIdx][5])
+            output['Y'].append(rawList[atomIdx][6])
+            output['Z'].append(rawList[atomIdx][7])
+        return (output)
+    else:
+        return ({})
 
 
 # Define proList is valid or not?
