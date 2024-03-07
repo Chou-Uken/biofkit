@@ -1,0 +1,138 @@
+---
+sort: 1
+---
+
+# Module - oldProtein
+
+这个`module`仅在alpha开发时期维护，在初期作为权宜之计创建。
+
+## 0. 导入
+```python
+from biofkit.proteinKit import oldProtein
+```
+
+## 1. PDB文件读取
+### Function - pdb2List
+加载PDB文件并返回一个列表，输出列表由若干个表示单个原子信息的列表构成，子列表的元素顺序为`[原子序号(int), 原子类型(str), 残基名(str), 残基标号(int), 链名(str), X坐标(float), Y坐标(float), Z坐标(float)]`。
+```python
+def pdb2List(pdbFilePath: str, csvPath: str = '', colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
+  """读取PDB文件并转换为列表
+
+  参数：
+    pdbFilePath (str)：PDB文件的路径
+    csvPath (str)：如果需要输出一个csv文件，则填入欲写入文件的路径，不存在则创建
+    colName (bool)：列表（和）csv文件是否需要列名
+
+  输出：
+    list：蛋白质结构（列表形式）
+  """
+```
+
+例：
+```python
+proList = pdb2List(pdbFilePath='~/example.pdb')
+```
+
+### Function - pdb2Dict
+加载PDB文件并输出一个字典，键为原子的属性，值为所有原子该属性组成的列表。`{'Serial: [], 'Atom': [], 'ResName': [], 'ResSeq': [], 'ChainId': [], 'X': [], 'Y': [], 'Z': []}`
+```python
+def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
+  """读取PDB文件并输出一个字典
+  
+  参数：
+    pdbFilePath (str)：PDB文件的路径
+
+  输出：
+    dict：蛋白质结构（字典形式）
+  """
+```
+
+例：
+```python
+proDict = pdb2Dict(pdbFilePath='~/example.pdb')
+```
+
+## 2. 蛋白列表字典互转
+### Function - proDict2ProList
+把一个包含蛋白结构的字典转换为列表，函数包含了查错机制。
+```python
+def proDict2ProList(rawDict: dict) -> list:
+  """转换蛋白字典为蛋白列表
+
+  参数：
+    rawDict (dict)：蛋白字典
+
+  输出：
+    list：蛋白列表
+  """
+```
+例：
+```python
+proList: list = proDict2ProList(rawDict=exampleProDict)
+```
+### Function - proList2ProDict
+把一个包含蛋白结构的列表转换为字典，函数包含了查错机制。
+```python
+def proList2ProDict(rawList: list) -> dict:
+  """转换蛋白字典为蛋白列表
+
+  参数：
+  rawList (list)：蛋白列表
+  
+  输出：
+  dict：蛋白字典
+  """
+```
+
+```python
+例：
+proDict: dict = proList2ProDict(rawList=exampleProList)
+```
+
+## 3. 蛋白列表/字典查错
+### Function - proListIsValid
+检查一个蛋白列表是否合法，在函数`proList2ProDict`中有使用。
+```python
+def proListIsValid(proList: list) -> bool:
+  """检查蛋白列表的合法性
+
+  参数：
+    proList (list)：待检测的蛋白列表
+
+  输出：
+    bool：True则合法，否则会报错
+
+  错误：
+    IndexError：存在长度不为8的子列表
+    TypeError：有原子信息的数据类型不正确
+  """
+```
+
+例：
+```python
+proListIsValid(proList=exampleProList)
+```
+
+### Function - proDictIsValid
+检查一个蛋白字典是否合法，在函数`proDict2ProList`有使用。
+```python
+def proDictIsValid(proDict: dict) -> bool:
+  """检查蛋白字典的合法性
+
+  参数：
+    proDict (dict)：待检测的蛋白字典
+
+  输出：
+    bool：True则合法，否则会报错
+
+  错误：
+    IndexError：值列表的长度不一致
+    TypeError：有原子信息的数据类型不正确
+  """
+```
+
+例：
+```python
+proDictIsValid(proDict=sampleProDict)
+```
+{% include list.liquid %}
