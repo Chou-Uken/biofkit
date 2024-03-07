@@ -2,7 +2,7 @@
 sort: 1
 ---
 
-# proteinKit
+# Subpackage - proteinKit
 
 proteinKit是以PDB文件处理为核心的python工具包。
 

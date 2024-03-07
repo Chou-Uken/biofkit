@@ -1,138 +1,75 @@
 ---
-sort: 1
+sort: 2
 ---
 
-# Module - oldProtein
+# Module - pdbKit
 
-这个`module`仅在alpha开发时期维护，在初期作为权宜之计创建。
+面向过程的PDB处理模块，允许读取PDB文件为biofkit.proteinKit.Protein类。
 
 ## 0. 导入
 ```python
-from biofkit.proteinKit import oldProtein
+from pdbKit.proteinKit import pdbKit
 ```
 
-## 1. PDB文件读取
-### Function - pdb2List
-加载PDB文件并返回一个列表，输出列表由若干个表示单个原子信息的列表构成，子列表的元素顺序为`[原子序号(int), 原子类型(str), 残基名(str), 残基标号(int), 链名(str), X坐标(float), Y坐标(float), Z坐标(float)]`。
+## 1. 读取PDB文件
+### Function - readPDB
+读取PDB文件，使用biofkit独有的类将蛋白质的各个层次（蛋白、肽链、残基、原子）保存在内存中。
 ```python
-def pdb2List(pdbFilePath: str, csvPath: str = '', colName: bool = False) -> list[list[int, str, str, int, str, float, float, float]]:
-  """读取PDB文件并转换为列表
-
-  参数：
-    pdbFilePath (str)：PDB文件的路径
-    csvPath (str)：如果需要输出一个csv文件，则填入欲写入文件的路径，不存在则创建
-    colName (bool)：列表（和）csv文件是否需要列名
-
-  输出：
-    list：蛋白质结构（列表形式）
-  """
-```
-
-例：
-```python
-proList = pdb2List(pdbFilePath='~/example.pdb')
-```
-
-### Function - pdb2Dict
-加载PDB文件并输出一个字典，键为原子的属性，值为所有原子该属性组成的列表。`{'Serial: [], 'Atom': [], 'ResName': [], 'ResSeq': [], 'ChainId': [], 'X': [], 'Y': [], 'Z': []}`
-```python
-def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
-  """读取PDB文件并输出一个字典
+def readPDB(pdbFile: str) -> ProteinClass.Protein:
+  """读取PDB文件并以Protein类型操作
   
   参数：
-    pdbFilePath (str)：PDB文件的路径
+    pdbFile (str)：PDB文件路径。
 
   输出：
-    dict：蛋白质结构（字典形式）
+    Protein：module proteinClass中的Protein类型。
   """
 ```
 
 例：
 ```python
-proDict = pdb2Dict(pdbFilePath='~/example.pdb')
+protein: Protein = pdbKit.readPDB(pdbFile='example.pdb')
 ```
 
-## 2. 蛋白列表字典互转
-### Function - proDict2ProList
-把一个包含蛋白结构的字典转换为列表，函数包含了查错机制。
+### Function - pdb2Seq
+直接提取PDB文件中的序列信息。输出为一个以ChainId为键，序列为值的字典。也可以输出为fasta文件。
 ```python
-def proDict2ProList(rawDict: dict) -> list:
-  """转换蛋白字典为蛋白列表
-
-  参数：
-    rawDict (dict)：蛋白字典
-
-  输出：
-    list：蛋白列表
-  """
-```
-例：
-```python
-proList: list = proDict2ProList(rawDict=exampleProDict)
-```
-### Function - proList2ProDict
-把一个包含蛋白结构的列表转换为字典，函数包含了查错机制。
-```python
-def proList2ProDict(rawList: list) -> dict:
-  """转换蛋白字典为蛋白列表
-
-  参数：
-  rawList (list)：蛋白列表
+def pdb2Seq(pdbFilePath: str, fastaFilePath: str = '', fastaLineLen: int = 80) -> dict[str, str]
+  """提取PDB文件中的序列。
   
-  输出：
-  dict：蛋白字典
-  """
-```
-
-```python
-例：
-proDict: dict = proList2ProDict(rawList=exampleProList)
-```
-
-## 3. 蛋白列表/字典查错
-### Function - proListIsValid
-检查一个蛋白列表是否合法，在函数`proList2ProDict`中有使用。
-```python
-def proListIsValid(proList: list) -> bool:
-  """检查蛋白列表的合法性
-
   参数：
-    proList (list)：待检测的蛋白列表
-
+    pdbFilePath (str)：PDB文件的路径。
+    fastaFilePath (str)：输出的fasta文件的路径，如果留空则不输出fasta。
+    fastaLineLen (int)：输出的fasta文件一行有多少个氨基酸残基字母。
+    
   输出：
-    bool：True则合法，否则会报错
+    dict[str, str]：键为ChainId，值为序列。
 
-  错误：
-    IndexError：存在长度不为8的子列表
-    TypeError：有原子信息的数据类型不正确
   """
 ```
 
 例：
 ```python
-proListIsValid(proList=exampleProList)
+seq: dict[str, str] = pdbKit.pdb2Seq(pdbFilePath='example.pdb', fastaFilePath='example.fasta')
 ```
 
-### Function - proDictIsValid
-检查一个蛋白字典是否合法，在函数`proDict2ProList`有使用。
-```python
-def proDictIsValid(proDict: dict) -> bool:
-  """检查蛋白字典的合法性
+## Class - ProteinKit
+ProteinKit类提供了一些常用的字典，例如氨基酸残基单字母/三字母缩写转换，在函数中有所使用，通常使用时无需实例化。
 
-  参数：
-    proDict (dict)：待检测的蛋白字典
+### Attribute - aaDictTHREE2One: dict[str, str]
+全大写氨基酸三字母缩写为键，大写单字母缩写为值。
 
-  输出：
-    bool：True则合法，否则会报错
+### Attribute - aaDictThree2One: dict[str, str]
+首字母大写氨基酸三字母缩写为键，大写单字母缩写为值。
 
-  错误：
-    IndexError：值列表的长度不一致
-    TypeError：有原子信息的数据类型不正确
-  """
-```
+### Attribute - aaDictthree2One: dict[str, str]
+全小写氨基酸三字母缩写为键，大写单字母缩写为值。
 
-例：
-```python
-proDictIsValid(proDict=sampleProDict)
-```
+### Attribute - aaDictOne2Three: dict[str, str]
+大写单字母缩写为键，首字母大写三字母缩写为值。
+
+### Attribute - aaDictOne2three: dict[str, str]
+大写单字母缩写为键，全小写三字母缩写为值。
+
+
 {% include list.liquid %}
