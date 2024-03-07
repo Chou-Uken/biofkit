@@ -1,5 +1,5 @@
 ---
-sort: 2
+sort: 1
 ---
 
 # Module - oldProtein
@@ -26,8 +26,10 @@ def pdb2List(pdbFilePath: str, csvPath: str = '', colName: bool = False) -> list
   输出：
     list：蛋白质结构（列表形式）
   """
+```
 
 例：
+```python
 proList = pdb2List(pdbFilePath='~/example.pdb')
 ```
 
@@ -43,8 +45,10 @@ def pdb2Dict(pdbFilePath: str) -> dict[str, list]:
   输出：
     dict：蛋白质结构（字典形式）
   """
+```
 
 例：
+```python
 proDict = pdb2Dict(pdbFilePath='~/example.pdb')
 ```
 
@@ -61,8 +65,9 @@ def proDict2ProList(rawDict: dict) -> list:
   输出：
     list：蛋白列表
   """
-
+```
 例：
+```python
 proList: list = proDict2ProList(rawDict=exampleProDict)
 ```
 ### Function - proList2ProDict
@@ -77,7 +82,9 @@ def proList2ProDict(rawList: list) -> dict:
   输出：
   dict：蛋白字典
   """
+```
 
+```python
 例：
 proDict: dict = proList2ProDict(rawList=exampleProList)
 ```
@@ -99,8 +106,10 @@ def proListIsValid(proList: list) -> bool:
     IndexError：存在长度不为8的子列表
     TypeError：有原子信息的数据类型不正确
   """
+```
 
 例：
+```python
 proListIsValid(proList=exampleProList)
 ```
 
@@ -120,8 +129,10 @@ def proDictIsValid(proDict: dict) -> bool:
     IndexError：值列表的长度不一致
     TypeError：有原子信息的数据类型不正确
   """
+```
 
 例：
+```python
 proDictIsValid(proDict=sampleProDict)
 ```
 {% include list.liquid %}

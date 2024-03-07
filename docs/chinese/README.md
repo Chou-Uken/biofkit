@@ -7,6 +7,5 @@ sort: 1
 ## 什么是**Biofkit**
 Biofkit是一个正在构建、不断发展的python包，目前主要用于处理pdb文件，也有双序列比对的功能。
 
-## 快速开始
 
-## oldProteid
+{% include list.liquid %}
