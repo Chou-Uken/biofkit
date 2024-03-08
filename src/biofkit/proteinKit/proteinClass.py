@@ -2,7 +2,27 @@
 # Thanks for using. Please report bugs (if any) at zhangyujian23@mails.ucas.ac.cn.
 
 class Atom(object):
+    """A class containing number, type and coordinate of an atom.
+
+    Attributes:
+        Serial (int): Id of atom.
+        Atom (str): Type of atom.
+        X (float): Coordinate of x.
+        Y (float): Coordinate of y.
+        Z (float): Coordinate of z.
+    """
+
     def __init__(self, serial: int, atom: str, x: float, y: float, z: float):
+        """Inits Atom with its id, type and coordinate.
+        
+        Args:
+            Serial (int): Id of atom.
+            Atom (str): Type of atom.
+            X (float): Coordinate of x.
+            Y (float): Coordinate of y.
+            Z (float): Coordinate of z.
+        """
+
         self.Serial: int = int(serial)
         self.Atom: str = str(atom)
         self.X: float = float(x)
@@ -17,7 +37,23 @@ class Atom(object):
 
 
 class Residue(object):
+    """A class containing number, type and its Atoms of a residue in a peptide.
+
+    Attributes:
+        ResSeq (int): Id of residue.
+        ResName (str): Type of residue.
+        AtomSet (list[Atom]): Set of Atom belonging to this residue.
+    """
+
     def __init__(self, atomList: list[Atom], resSeq: int = 0, resName = '*'):
+        """Inits residue with its id, type and atoms.
+
+        Args:
+            ResSeq (int): Id of residue.
+            ResName (str): Type of residue.
+            AtomSet (list[Atom]): Set of Atoms belonging to this residue.
+        """
+
         self.ResSeq: int = int(resSeq)
         self.ResName: str = str(resName)
         # type test
@@ -40,11 +76,31 @@ class Residue(object):
         return (self.ResName + str(self.ResSeq))
 
     def getName(self) -> str:
+        """To get type of this residue.
+        
+        Returns:
+            str: Type of this residue.
+        """
+
         return (self.ResName)
         
         
 class Peptide(object):
+    """a class of peptide with its id and set of residues belonging to it.
+
+    Attributes:
+        ChainId (str): Id of this chain.
+        ResSet (list[Residue]): Set of Residues belonging to this chain.
+    """
+
     def __init__(self, resList: list[Residue], chainId: str = 'A'):
+        """Inits Peptide with its id and residues belonging to it.
+        
+        Args:
+            ChainId (str): Id of this chain.
+            ResSet (list[Residue]): Set of Residues belonging to this chain.
+        """
+
         self.ChainId: str = chainId
         # type test
         try:
@@ -69,9 +125,26 @@ class Peptide(object):
         return (len(self.ResSet))
 
     def getChainId(self) -> str:
+        """To get id of this chain.
+        
+        Returns:
+            str: Id of this chain.
+        """
+
         return (self.ChainId)
     
     def cut(self, end: int, beginning: int = 0, newChainId: str = 'X'):
+        """To cut a peptide at specific site.
+        
+        Args:
+            end (int): Id of the residue at the end of output.
+            beginning (int): Id of the residue at the beginning of output.
+            newChainId (str): Id of the Peptide you created.
+
+        Returns:
+            Peptide: A new peptide.
+        """
+
         if ((beginning == 0) and (end == len(self.ResSet))):
             print('An identical peptide is created!')
         return (Peptide(resList=self.ResSet[beginning: end], chainId=newChainId))
