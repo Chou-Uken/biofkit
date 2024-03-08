@@ -289,6 +289,16 @@ class ConvKit:
 
 # Read fasta files
 def readFasta(fastaFilePath: str) -> dict[str, str]:
+    """To read FASTA file and get its identifiers and sequences. The output is a dictionary whose keys are identifiers, values are sequences
+    
+    Args:
+        fastaFilePath (str): Path of FASTA file.
+
+    Returns:
+        dict[str, str]: Keys are identifiers. And values are sequences.
+
+    """
+
     outputDict: dict[str, str] = {}
     with open(file=fastaFilePath, mode='r') as f:
         line: str = f.readline()
@@ -311,6 +321,15 @@ def readFasta(fastaFilePath: str) -> dict[str, str]:
 
 # transcription
 def dna2Rna(dnaSeq: str) -> str:
+    """To transcribe DNA into RNA.
+
+    Args:
+        dnaSeq (str): DNA sequence. Capitalization does not matter.
+
+    Returns:
+        str: RNA sequence. All letters are uppercase.
+    """
+
     convKit: ConvKit = ConvKit()
     output = dnaSeq.upper().translate(str.maketrans(convKit.dna2RnaDict))
     return (output)
@@ -318,6 +337,15 @@ def dna2Rna(dnaSeq: str) -> str:
 
 # reverse transcription
 def rna2Dna(rnaSeq: str) -> str:
+    """To reverse transcribe RNA sequence into DNA sequence.
+    
+    Args:
+        rnaSeq (str): RNA sequence. Capitalization does not matter.
+
+    Returns:
+        str: DNA sequence. All letters are uppercase.
+    """
+
     convKit: ConvKit = ConvKit()
     output = rnaSeq.upper().translate(str.maketrans(convKit.rna2DnaDict))
     return (output)
@@ -325,6 +353,17 @@ def rna2Dna(rnaSeq: str) -> str:
 
 # DNA translation
 def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
+    """To translate DNA sequence into protein sequence directly.
+    
+    Args:
+        dnaSeq (str): DNA sequence. Capitalization does not matter.
+        start (int): Beginning site of the translation.
+        end (int): Ending site of the translation.
+
+    Returns:
+        str: Protein sequence. All letters are uppercase.
+    """
+
     if (end == -1):
         end = len(dnaSeq) - 1
     assert (end > start), 'Invalid arguments!'
@@ -340,6 +379,17 @@ def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
 
 # RNA translation
 def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
+    """To transcribe RNA sequence into protein sequence.
+
+    Args: 
+        rnaSeq (str): RNA sequence. Capitalization does not matter.
+        start (int): Beginning site of the translation.
+        end (int): Ending site of the translation.
+
+    Returns:
+        str: Protein sequence. All letters are uppercase.
+    """
+
     if (end == -1):
         end = len(rnaSeq) - 1
     assert (end > start), 'Invalid arguments!'
@@ -354,11 +404,23 @@ def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
     
 
 # Alignment
-def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth: int = 50) -> None:
+    """Pairwise DNA Alignment. Results will be output in console.
+    
+    Args:
+        fasta (str): FASTA file with two sequences.
+        seqA (str): If no FASTA file is given. Sequence can be put into argument seqA.
+        seqB (str): If no FASTA file is given. Sequence can be put into argument seqB.
+        matrix (str): score matrix. Can be 'unitary', 'blast' or 'tt'.
+        gapOpen (float): Punishment for opening a gap.
+        gapExtend (float): Punishment for extending a gap.
+        consoleWidth (int): This determine how many bases shown in a single line.
+    """
+
     if (fasta != ''):
         sequences: dict[str, str] = readFasta(fastaFilePath=fasta)
-    seqA: str = list(sequences.values())[0]
-    seqB: str = list(sequences.values())[1]
+        seqA: str = list(sequences.values())[0]
+        seqB: str = list(sequences.values())[1]
     seqA = seqA.upper()
     seqB = seqB.upper()
     # sequence cleaning (remove elements excluding [A, C, G, T])
@@ -574,6 +636,17 @@ def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', m
 
 
 def pairwiseProtAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTT', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+    """Pairwise Protein Alignment. Results will be output in console.
+    
+    Args:
+        fasta (str): FASTA file with two sequences.
+        seqA (str): If no FASTA file is given. Sequence can be put into argument seqA.
+        seqB (str): If no FASTA file is given. Sequence can be put into argument seqB.
+        matrix (str): score matrix. Can be 'unitary', 'blosum62' or 'pam250'.
+        gapOpen (float): Punishment for opening a gap.
+        gapExtend (float): Punishment for extending a gap.
+        consoleWidth (int): This determine how many bases shown in a single line.
+    """
     if (fasta != ''):
         sequences: dict[str, str] = readFasta(fastaFilePath=fasta)
     seqA: str = list(sequences.values())[0]

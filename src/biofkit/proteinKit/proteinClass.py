@@ -152,7 +152,21 @@ class Peptide(object):
 
 
 class Protein(object):
+    """a class containing protein with its peptides.
+
+    Attributes:
+        ame (str): Name of this protein.
+        pepSet (list[Peptide]): The list of Peptides belonging to the Protein.
+    """
+
     def __init__(self, pepList: list[Peptide], proteinName: str = 'Unnamed'):
+        """Inits Protein with its Peptides and its name.
+
+        Args:
+            pepList (list[Peptide]): a list comprising of Peptides.
+            name (str): Name of this protein.
+        """
+
         self.name = proteinName
         # type test
         try:
@@ -165,17 +179,26 @@ class Protein(object):
         except (Exception):
             raise
         else:
-            self.PepSet: list[Peptide] = pepList
+            self.pepSet: list[Peptide] = pepList
             
     def __str__(self) -> str:
-        return (self.name + ': ' + str(self.PepSet))
+        return (self.name + ': ' + str(self.pepSet))
 
     def __repr__(self) -> str:
-        return (self.name + ': ' + str(self.PepSet))
+        return (self.name + ': ' + str(self.pepSet))
 
     def pick(self, chainId: str) -> list[Peptide]:
+        """pick specific peptide from a Protein.
+        
+        Args:
+            chainId (str): Id of selected peptide.
+
+        Returns:
+            list[Peptide]: a list of Peptides with given Id.
+        """
+
         output: list[Peptide] = []
-        for peptide in self.PepSet:
+        for peptide in self.pepSet:
             if (peptide.getChainId() == chainId):
                 output.append(peptide)
         return (output)
