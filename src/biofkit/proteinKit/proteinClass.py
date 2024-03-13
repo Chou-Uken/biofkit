@@ -36,6 +36,12 @@ class Atom(object):
         return ('Atom: {name} at location of ({x}, {y}, {z}))'.format(name=self.Atom, x=self.X, y=self.Y, z=self.Z))
 
     def getCoord(self) -> dict[str, float]:
+        """Get coordinate of some atom.
+
+        Returns:
+            dict[str, float]: x/y/z axis and its coordinate.
+        """
+
         return ({'x': self.X, 'y': self.Y, 'z': self.Z})
 
 
