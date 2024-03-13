@@ -379,7 +379,7 @@ def dna2Pro(dnaSeq: str, start: int = 0, end: int = -1) -> str:
 
 # RNA translation
 def rna2Pro(rnaSeq: str, start: int = 0, end: int = -1) -> str:
-    """To transcribe RNA sequence into protein sequence.
+    """To translate RNA sequence into protein sequence.
 
     Args:
         rnaSeq (str): RNA sequence. Capitalization does not matter.
@@ -635,7 +635,7 @@ def pairwiseDnaAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTA', m
     print(finalScore)
 
 
-def pairwiseProtAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTT', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth = 50) -> None:
+def pairwiseProtAlign(fasta: str = '', seqA: str = 'ACGT', seqB: str = 'ACGTT', matrix: str = 'unitary', gapOpen: float = -10, gapExtend: float = -0.5, consoleWidth: int = 50) -> None:
     """Pairwise Protein Alignment. Results will be output in console.
 
     Args:
