@@ -54,7 +54,7 @@ class Residue(object):
         AtomSet (list[Atom]): Set of Atom belonging to this residue.
     """
 
-    def __init__(self, atomList: list[Atom], resSeq: int = 0, resName = '*'):
+    def __init__(self, atomList: list[Atom], resSeq: int = 0, resName: str = '*'):
         """Inits residue with its id, type and atoms.
 
         Args:
