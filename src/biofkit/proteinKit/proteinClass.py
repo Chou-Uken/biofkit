@@ -31,9 +31,12 @@ class Atom(object):
     
     def __str__(self) -> str:
         return ('Atom: {name} at location of ({x}, {y}, {z})'.format(name=self.Atom, x=self.X, y=self.Y, z=self.Z))
-    
+
     def __repr__(self) -> str:
         return ('Atom: {name} at location of ({x}, {y}, {z}))'.format(name=self.Atom, x=self.X, y=self.Y, z=self.Z))
+
+    def getCoord(self) -> dict[str, float]:
+        return ({'x': self.X, 'y': self.Y, 'z': self.Z})
 
 
 class Residue(object):
@@ -74,6 +77,9 @@ class Residue(object):
 
     def __repr__(self) -> str:
         return (self.ResName + str(self.ResSeq))
+
+    def __getitem__(self, idx: int) -> Atom:
+        return (self.AtomSet[idx])
 
     def getName(self) -> str:
         """To get type of this residue.
@@ -123,6 +129,9 @@ class Peptide(object):
 
     def __len__(self) -> int:
         return (len(self.ResSet))
+
+    def __getitem__(self, idx: int) -> Residue:
+        return (self.ResSet[idx])
 
     def getChainId(self) -> str:
         """To get id of this chain.
@@ -186,6 +195,9 @@ class Protein(object):
 
     def __repr__(self) -> str:
         return (self.name + ': ' + str(self.pepSet))
+
+    def __getitem__(self, idx: int) -> Peptide:
+        return (self.pepSet[idx])
 
     def pick(self, chainId: str) -> list[Peptide]:
         """pick specific peptide from a Protein.
