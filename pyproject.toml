@@ -1,3 +1,6 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
 [project]
 name = "biofkit"
 version = "0.1.15"
@@ -5,16 +8,27 @@ authors = [
   { name="Zhang Yujian", email="Chouuken@outlook.com" },
   { name="Wu Yuexin", email="wuyvexiaoxin@163.com" }
 ]
+maintainers = [
+  { name="Zhang Yujian", emails="Chouuken@outlook.com"}
+]
 description = "With biofkit you can deal with pdb file (extract sequence, atom information and so on) very easily. Pairwise alignment function is now online."
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+  "biotite>=1.3",
+  "numpy>=2.3.1",
+  "typer>=0.16",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
-
+license = "Apache-2.0"
+license-files = ["LICEN[CS]E*"]
+[project.scripts]
+struct2block = "struct2block.struct2block:main"
 [project.urls]
 Homepage = "https://github.com/Chou-Uken/biofkit"
 Issues = "https://github.com/Chou-Uken/biofkit/issues"
